@@ -14,11 +14,10 @@ function draw() {
     background(240);
     strokeWeight(4);
 
-    for (let [key,value] of edges) {
-      let node1 = key.split(",")
+    for (let [node1,value] of edges) {
       for(let no of value){
-        let node2 = no[0] 
-        line(node1[0], node1[1], node2[0], node2[1]);
+        let node2 = no[0];
+        line(node1.x, node1.y, node2.x, node2.y);
       }
     }
     
@@ -39,19 +38,22 @@ function mousePressed() {
   if (clickedNode) {
     if (selectedNode == null) {
       selectedNode = clickedNode;
-      let chave = selectedNode.x.toString()+","+selectedNode.y.toString();
-    } else if (selectedNode != clickedNode && ) {
-      if(edges.has(chave)){
-        edges.get(chave).push()///continuar aqui
+    } else if (selectedNode != clickedNode){
+      if(!edges.has(selectedNode)){
+        console.log("potato");
+        console.log(selectedNode);
+        edges.set(selectedNode,[]);
       }
-      edges.set(, );
+      if(!edges.get(selectedNode).includes([clickedNode,5])){
+        edges.get(selectedNode).push([clickedNode,5]);
+      }
       selectedNode = null;
       updateEdgeCount();
     }
   } else {
     let clickedEdge = getClickedEdge(mouseX,mouseY);
     if(clickedEdge != null){
-      edges = edges.filter(edge => edge != clickedEdge);
+      edges.set(clickedEdge[0],edges.get(clickedEdge[0]).filter(edge => edge != clickedEdge[1]));
     }
     else{
       nodes.push({ x: mouseX, y: mouseY });
@@ -87,8 +89,11 @@ function getClickedNode(x, y) {
 
 function getClickedEdge(x,y){
   let r = null;
-  for (let edge of edges){
-    if (belongsToEdge(edge.a,edge.b,x,y)) r = edge;
+  for (let [node1,nos] of edges){
+    for(let no of nos){
+      let node2 = no[0]
+      if (belongsToEdge(node1,node2,x,y)) r = [node1,no];
+    }
   }
   console.log(r);
   return r;
@@ -114,7 +119,7 @@ function updateVertexCount() {
   }
 
 function updateEdgeCount(){
-    document.getElementById('edge-count').innerText = `Número de Arestas: ${edges.length}`;
+    document.getElementById('edge-count').innerText = `Número de Arestas: ${edges.size}`;
 }
 
 
