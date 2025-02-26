@@ -4,6 +4,8 @@ let edges = new Map();
 let selectedNode = null;
 let selectedEdge = null;
 let edgcount = 0;
+var popup;
+let clicky = true; 
 
 function setup() {
   let canvas = createCanvas(1000, 800);
@@ -29,7 +31,7 @@ function draw() {
 }
 
 function mousePressed() {
-  if(mouseX<=0 || mouseX>width ||mouseY<=0 || mouseY> height){
+  if(mouseX<=0 || mouseX>width ||mouseY<=0 || mouseY> height || !clicky){
     return;
   }
 
@@ -45,6 +47,7 @@ function mousePressed() {
       }
       if(!edges.get(selectedNode).includes([clickedNode,5])){
         edges.get(selectedNode).push([clickedNode,5]);
+        //showPopup();
         edgcount++;
       }
       selectedNode = null;
@@ -143,4 +146,22 @@ function nodeRemove(){
 window.onload = function() {
   document.getElementById('clear-btn').addEventListener('click', clearGraph);
   document.getElementById('clearVertex-btn').addEventListener('click', nodeRemove);
+  popup = document.getElementById("popup")
 }
+
+function showPopup() {
+    popup.style.display = "flex";
+    clicky = false;
+}
+
+// Function to hide the popup
+function hidePopup() {
+    popup.style.display = "none";
+    clicky = true;
+}
+
+window.addEventListener("click", function (event) {
+  if (event.target === popup) {
+      hidePopup();
+  }
+});
