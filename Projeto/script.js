@@ -3,6 +3,7 @@ let nodes = [];
 let edges = new Map();
 let selectedNode = null;
 let selectedEdge = null;
+let edgcount = 0;
 
 function setup() {
   let canvas = createCanvas(1000, 800);
@@ -40,12 +41,11 @@ function mousePressed() {
       selectedNode = clickedNode;
     } else if (selectedNode != clickedNode){
       if(!edges.has(selectedNode)){
-        console.log("potato");
-        console.log(selectedNode);
         edges.set(selectedNode,[]);
       }
       if(!edges.get(selectedNode).includes([clickedNode,5])){
         edges.get(selectedNode).push([clickedNode,5]);
+        edgcount++;
       }
       selectedNode = null;
       updateEdgeCount();
@@ -54,6 +54,7 @@ function mousePressed() {
     let clickedEdge = getClickedEdge(mouseX,mouseY);
     if(clickedEdge != null){
       edges.set(clickedEdge[0],edges.get(clickedEdge[0]).filter(edge => edge != clickedEdge[1]));
+      edgcount--;
     }
     else{
       nodes.push({ x: mouseX, y: mouseY });
@@ -102,7 +103,8 @@ function getClickedEdge(x,y){
 
 function clearGraph() {
     nodes.length = 0;
-    edges.length = 0;
+    edges = new Map()
+    edgcount = 0
     selectedNode = null;
     selectedEdge = null;
     updateVertexCount(); 
@@ -111,34 +113,21 @@ function clearGraph() {
   }
 
 
-
-
-
 function updateVertexCount() {
     document.getElementById('vertex-count').innerText = `Número de Vértices: ${nodes.length}`;
   }
 
 function updateEdgeCount(){
-    document.getElementById('edge-count').innerText = `Número de Arestas: ${edges.size}`;
-}
-
-
-function edgeRemove(){
-  let edgeToRemove = getClickedNode(x,y)
-
-  if (edgeToRemove) {
-    edges = edges.filter(edge => edge !== edgeToRemove);
-    updateEdgeCount();
-
-    redraw();
-  }
+    document.getElementById('edge-count').innerText = `Número de Arestas: ${edgcount}`;
 }
 
 
 function nodeRemove(){
   if(selectedNode){
-    edges = edges.filter(edge => edge.a != selectedNode && edge.b != selectedNode);
-
+    edges.delete(selectedNode)
+    for([node1, no] of edges){
+      edges.set(node1,no.filter(n => n[0] != selectedNode))
+    }
     updateEdgeCount();
 
     nodes = nodes.filter(node => node != selectedNode);
@@ -154,5 +143,4 @@ function nodeRemove(){
 window.onload = function() {
   document.getElementById('clear-btn').addEventListener('click', clearGraph);
   document.getElementById('clearVertex-btn').addEventListener('click', nodeRemove);
-  document.getElementById('clearNode-btn').addEventListener('click', edgeRemove);
 }
