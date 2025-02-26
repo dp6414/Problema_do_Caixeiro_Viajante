@@ -6,6 +6,9 @@ let selectedEdge = null;
 let edgcount = 0;
 var popup;
 let clicky = true; 
+let peso = 0;
+let ctx = null;
+let activePopup = false;
 
 function setup() {
   let canvas = createCanvas(1000, 800);
@@ -14,13 +17,22 @@ function setup() {
 }
 
 function draw() {
+  if(!activePopup){
     background(240);
     strokeWeight(4);
+    textSize(13);
+    fill(0);
+    textAlign(CENTER,CENTER);
+
 
     for (let [node1,value] of edges) {
       for(let no of value){
         let node2 = no[0];
+        let peso = no[1];
+        mx = (node1.x + node2.x) / 2;
+        my = (node1.y + node2.y) / 2;
         line(node1.x, node1.y, node2.x, node2.y);
+        text(peso, mx-10, my-10);
       }
     }
     
@@ -28,6 +40,7 @@ function draw() {
         fill(node == selectedNode ? 'red' : 'black'); 
         ellipse(node.x, node.y, 25, 25);
     }
+  }
 }
 
 function mousePressed() {
@@ -39,15 +52,16 @@ function mousePressed() {
 
 
   if (clickedNode) {
+    noLoop();
     if (selectedNode == null) {
       selectedNode = clickedNode;
     } else if (selectedNode != clickedNode){
       if(!edges.has(selectedNode)){
         edges.set(selectedNode,[]);
       }
-      if(!edges.get(selectedNode).includes([clickedNode,5])){
-        edges.get(selectedNode).push([clickedNode,5]);
-        //showPopup();
+      if(!edges.get(selectedNode).some(no => no[0] == clickedNode)){
+        showPopup();
+        edges.get(selectedNode).push([clickedNode,peso]);
         edgcount++;
       }
       selectedNode = null;
@@ -143,21 +157,33 @@ function nodeRemove(){
   
 }
 
+function inputPeso(){
+  const input = document.getElementById('inputPeso');
+  peso = input.value;
+  hidePopup();
+  return peso
+}
+
+
 window.onload = function() {
   document.getElementById('clear-btn').addEventListener('click', clearGraph);
   document.getElementById('clearVertex-btn').addEventListener('click', nodeRemove);
-  popup = document.getElementById("popup")
+  document.getElementById('inAresta').addEventListener('click', inputPeso);
+  popup = document.getElementById("popup");
 }
 
 function showPopup() {
     popup.style.display = "flex";
     clicky = false;
+    activePopup = true;
+    
 }
 
 // Function to hide the popup
 function hidePopup() {
     popup.style.display = "none";
     clicky = true;
+    activePopup=false;
 }
 
 window.addEventListener("click", function (event) {
