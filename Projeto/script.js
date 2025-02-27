@@ -209,6 +209,7 @@ window.onload = function() {
   popup = document.getElementById("popup");
 }
 
+
 function pesoPopup() {
     popup.style.display = "flex";
     clicky = false;
@@ -224,7 +225,8 @@ function hidePopup() {
 }
 
 window.addEventListener("click", function (event) {
-  if (event.target === popup) {
+  if (event.target === popup || event.target === closepopup) {
       hidePopup();
   }
 });
+
