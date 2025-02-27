@@ -34,8 +34,14 @@ function draw() {
         let peso = no[1];
         mx = (node1.x + node2.x) / 2;
         my = (node1.y + node2.y) / 2;
+        m = (node2.y - node1.y) / (node2.x - node1.x); 
         line(node1.x, node1.y, node2.x, node2.y);
-        text(peso, mx-10, my-15);
+        if(m>0){
+          text(peso, mx+15, my-15);
+        }
+        else{
+          text(peso, mx-10, my-10);
+        }
       }
     }
     
@@ -225,7 +231,7 @@ function hidePopup() {
 }
 
 window.addEventListener("click", function (event) {
-  if (event.target === popup || event.target === closepopup) {
+  if (event.target === popup) {
       hidePopup();
   }
 });
