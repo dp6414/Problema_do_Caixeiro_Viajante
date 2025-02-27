@@ -1,5 +1,6 @@
 
 let nodes = [];
+let nodeCount = 1;
 let edges = new Map();
 let selectedNode = null;
 let selectedEdge = null;
@@ -9,6 +10,8 @@ let clicky = true;
 let peso = 0;
 let ctx = null;
 let activePopup = false;
+let tempEdge = null;
+
 
 function setup() {
   let canvas = createCanvas(1000, 800);
@@ -39,6 +42,10 @@ function draw() {
     for (let node of nodes) {
         fill(node == selectedNode ? 'red' : 'black'); 
         ellipse(node.x, node.y, 25, 25);
+
+        fill('white');
+            textSize(14);
+            text(node.name, node.x, node.y);
     }
   }
 }
@@ -56,14 +63,14 @@ function mousePressed() {
     if (selectedNode == null) {
       selectedNode = clickedNode;
     } else if (selectedNode != clickedNode){
-      if(!edges.has(selectedNode)){
-        edges.set(selectedNode,[]);
-      }
-      if(!edges.get(selectedNode).some(no => no[0] == clickedNode)){
-        showPopup();
-        edges.get(selectedNode).push([clickedNode,peso]);
-        edgcount++;
-      }
+      if (!edges.has(selectedNode)) {
+        edges.set(selectedNode, []);
+    }
+    
+    if (!edges.get(selectedNode).some(no => no[0] == clickedNode)) {
+        tempEdge = { from: selectedNode, to: clickedNode };
+        showPopup(); 
+    }
       selectedNode = null;
       updateEdgeCount();
     }
@@ -74,7 +81,9 @@ function mousePressed() {
       edgcount--;
     }
     else{
-      nodes.push({ x: mouseX, y: mouseY });
+      let nodeName = String.fromCharCode(64 + nodeCount);
+      nodes.push({ x: mouseX, y: mouseY, name: nodeName});
+      nodeCount ++;
       selectedNode = null;
       updateVertexCount(); 
     }
@@ -124,6 +133,7 @@ function clearGraph() {
     edgcount = 0
     selectedNode = null;
     selectedEdge = null;
+    nodeCount = 1;
     updateVertexCount(); 
     updateEdgeCount();
     redraw();
@@ -150,6 +160,7 @@ function nodeRemove(){
     nodes = nodes.filter(node => node != selectedNode);
 
     updateVertexCount();
+    nodeCount --;
 
     redraw();
     selectedNode = null
@@ -157,11 +168,19 @@ function nodeRemove(){
   
 }
 
-function inputPeso(){
+function inputPeso() {
   const input = document.getElementById('inputPeso');
-  peso = input.value;
+  let peso = parseInt(input.value); 
+
+  if (!isNaN(peso)) {
+      edges.get(tempEdge.from).push([tempEdge.to, peso]);
+      edgcount++;
+      updateEdgeCount();
+  }
+
+  tempEdge = null; 
   hidePopup();
-  return peso
+  redraw();
 }
 
 
