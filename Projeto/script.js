@@ -189,7 +189,9 @@ window.onload = function() {
   document.getElementById('clearVertex-btn').addEventListener('click', nodeRemove);
   document.getElementById('inAresta').addEventListener('click', inputPeso);
   popup = document.getElementById("popup");
+  closepopup = document.getElementById("closeButton");
 }
+
 
 function showPopup() {
     popup.style.display = "flex";
@@ -206,7 +208,8 @@ function hidePopup() {
 }
 
 window.addEventListener("click", function (event) {
-  if (event.target === popup) {
+  if (event.target === popup || event.target === closepopup) {
       hidePopup();
   }
 });
+
