@@ -40,6 +40,37 @@ button:hover {
     background-color: #0056b3;
 }
 
+.redButton {
+    background-color: #ee0e0e;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.redButton:hover {
+    background-color: #bd0d0d;
+}
+
+input {
+    width: 100px; 
+    padding: 10px; 
+    font-size: 16px; 
+    border: 2px solid #007bff; 
+    border-radius: 8px; 
+    outline: none; 
+    margin-bottom: 10px;
+    text-align: right;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; 
+}
+
+input:focus {
+    border-color: #0575ec; 
+    box-shadow: 0 0 8px rgba(2, 116, 192, 0.233); 
+}
+
 
 .popup {
     display: none; /* Hidden by default */

@@ -1,4 +1,4 @@
-
+let clickedEdge = null;
 let nodes = [];
 let nodeCount = 1;
 let edges = new Map();
@@ -35,7 +35,7 @@ function draw() {
         mx = (node1.x + node2.x) / 2;
         my = (node1.y + node2.y) / 2;
         line(node1.x, node1.y, node2.x, node2.y);
-        text(peso, mx-10, my-10);
+        text(peso, mx-10, my-15);
       }
     }
     
@@ -59,30 +59,39 @@ function mousePressed() {
 
 
   if (clickedNode) {
-    noLoop();
     if (selectedNode == null) {
       selectedNode = clickedNode;
     } else if (selectedNode != clickedNode){
       if (!edges.has(selectedNode)) {
         edges.set(selectedNode, []);
-    }
-    
-    if (!edges.get(selectedNode).some(no => no[0] == clickedNode)) {
-        tempEdge = { from: selectedNode, to: clickedNode };
-        showPopup(); 
-    }
+      }
+      if (!edges.has(clickedNode)) {
+        edges.set(clickedNode, []);
+      }
+      if (!edges.get(selectedNode).some(no => no[0] == clickedNode)) {
+        clickedEdge = [selectedNode, [clickedNode,null]];
+        pesoPopup(); 
+      }
       selectedNode = null;
       updateEdgeCount();
     }
   } else {
-    let clickedEdge = getClickedEdge(mouseX,mouseY);
+    clickedEdge = getClickedEdge(mouseX,mouseY);
     if(clickedEdge != null){
-      edges.set(clickedEdge[0],edges.get(clickedEdge[0]).filter(edge => edge != clickedEdge[1]));
+      pesoPopup();
       edgcount--;
     }
     else{
-      let nodeName = String.fromCharCode(64 + nodeCount);
-      nodes.push({ x: mouseX, y: mouseY, name: nodeName});
+      let nodeName = 64;
+      let rep = true;
+      while(rep){
+        nodeName++;
+        rep = false
+        for (node of nodes){
+          if(node.name == String.fromCharCode(nodeName)) rep = true;
+        }
+      }
+      nodes.push({ x: mouseX, y: mouseY, name: String.fromCharCode(nodeName)});
       nodeCount ++;
       selectedNode = null;
       updateVertexCount(); 
@@ -122,7 +131,6 @@ function getClickedEdge(x,y){
       if (belongsToEdge(node1,node2,x,y)) r = [node1,no];
     }
   }
-  console.log(r);
   return r;
 }
 
@@ -168,17 +176,26 @@ function nodeRemove(){
   
 }
 
+function delAresta(){
+  edges.set(clickedEdge[0],edges.get(clickedEdge[0]).filter(edge => edge[0] != clickedEdge[1][0]));
+  edges.set(clickedEdge[1][0],edges.get(clickedEdge[1][0]).filter(edge => edge[0] != clickedEdge[0]));
+  hidePopup();
+}
+
 function inputPeso() {
   const input = document.getElementById('inputPeso');
   let peso = parseInt(input.value); 
-
+  
   if (!isNaN(peso)) {
-      edges.get(tempEdge.from).push([tempEdge.to, peso]);
-      edgcount++;
-      updateEdgeCount();
+    edges.set(clickedEdge[0],edges.get(clickedEdge[0]).filter(edge => edge[0] != clickedEdge[1][0]));
+    edges.get(clickedEdge[0]).push([clickedEdge[1][0], peso]);
+    edges.set(clickedEdge[1][0],edges.get(clickedEdge[1][0]).filter(edge => edge[0] != clickedEdge[0]));
+    edges.get(clickedEdge[1][0]).push([clickedEdge[0], peso]);
+    edgcount++;
+    updateEdgeCount();
   }
 
-  tempEdge = null; 
+  clickedEdge = null; 
   hidePopup();
   redraw();
 }
@@ -188,10 +205,11 @@ window.onload = function() {
   document.getElementById('clear-btn').addEventListener('click', clearGraph);
   document.getElementById('clearVertex-btn').addEventListener('click', nodeRemove);
   document.getElementById('inAresta').addEventListener('click', inputPeso);
+  document.getElementById('delAresta').addEventListener('click', delAresta)
   popup = document.getElementById("popup");
 }
 
-function showPopup() {
+function pesoPopup() {
     popup.style.display = "flex";
     clicky = false;
     activePopup = true;
