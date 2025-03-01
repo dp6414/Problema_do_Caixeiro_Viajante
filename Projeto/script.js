@@ -11,6 +11,8 @@ let peso = 0;
 let ctx = null;
 let activePopup = false;
 let tempEdge = null;
+let caminho = [];
+
 
 
 function setup() {
@@ -211,8 +213,9 @@ window.onload = function() {
   document.getElementById('clear-btn').addEventListener('click', clearGraph);
   document.getElementById('clearVertex-btn').addEventListener('click', nodeRemove);
   document.getElementById('inAresta').addEventListener('click', inputPeso);
-  document.getElementById('delAresta').addEventListener('click', delAresta)
+  document.getElementById('delAresta').addEventListener('click', delAresta);
   popup = document.getElementById("popup");
+  document.getElementById('vizinhoMaisProximo').addEventListener('click', vizinhoMaisProximo);
 }
 
 
@@ -236,3 +239,47 @@ window.addEventListener("click", function (event) {
   }
 });
 
+function orderArestas(){
+  for( let [node,no] of edges){
+    edges.get(node).sort((a,b) => a[1] - b[1]);
+  }
+}
+
+function vizinhoMaisProximo(){
+  if(selectedNode != null){  
+    orderArestas();
+    let peso = 0;
+    caminho = [];
+    caminho.push(selectedNode);
+    let nodeChoice = [-1];
+    let currentChoice;
+    let currentNode;
+    let currentEdges;
+    let i;
+    let done = false;
+    while(caminho.length != 0){
+      console.log(nodeChoice);
+      currentNode = caminho.at(-1);
+      currentChoice = nodeChoice.pop()+1;
+      currentEdges = edges.get(currentNode);
+      if(caminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)) break;
+      for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
+      if(i==currentEdges.length) caminho.pop();
+      else{
+        nodeChoice.push(i);
+        nodeChoice.push(-1);
+        caminho.push(currentEdges[i][0]);
+        peso += currentEdges[i][1];
+      }
+      console.log(currentNode);
+      console.log(i);
+    }
+    console.log(currentEdges);
+    for( let c of caminho){
+      console.log(c.name);
+    }
+    selectedNode = null;
+    return peso;
+  }
+}
+ 

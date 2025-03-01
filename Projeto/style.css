@@ -62,7 +62,7 @@ input {
     border-radius: 8px; 
     outline: none; 
     margin-bottom: 10px;
-    text-align: right;
+    text-align: center;
     transition: border-color 0.3s ease, box-shadow 0.3s ease; 
 }
 
