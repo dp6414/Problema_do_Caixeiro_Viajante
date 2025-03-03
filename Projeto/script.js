@@ -12,6 +12,7 @@ let ctx = null;
 let activePopup = false;
 let tempEdge = null;
 let caminho = [];
+let arestasPercorridas = [];
 
 
 
@@ -22,42 +23,45 @@ function setup() {
 }
 
 function draw() {
-  if(!activePopup){
-    background(240);
-    strokeWeight(4);
-    textSize(13);
-    fill(0);
-    textAlign(CENTER,CENTER);
+  if (!activePopup) {
+    background(240);  
+    strokeWeight(4); 
+    textSize(13);    
+    textAlign(CENTER, CENTER);  
 
-
-    for (let [node1,value] of edges) {
-      for(let no of value){
+    for (let [node1, value] of edges) {
+      for (let no of value) {
         let node2 = no[0];
         let peso = no[1];
         mx = (node1.x + node2.x) / 2;
         my = (node1.y + node2.y) / 2;
-        m = (node2.y - node1.y) / (node2.x - node1.x); 
+        m = (node2.y - node1.y) / (node2.x - node1.x);
+
+        let percorrida = arestasPercorridas.some(a => 
+          (a[0] === node1.name && a[1] === node2.name) || (a[0] === node2.name && a[1] === node1.name)
+        );
+
+        stroke(percorrida ? 'red' : 'black');  
         line(node1.x, node1.y, node2.x, node2.y);
-        if(m>0){
-          text(peso, mx+15, my-15);
-        }
-        else{
-          text(peso, mx-10, my-10);
+        
+        if (m > 0) {
+          text(peso, mx + 15, my - 15);  
+        } else {
+          text(peso, mx - 10, my - 10);  
         }
       }
     }
-    
-    for (let node of nodes) {
-        fill(node == selectedNode ? 'red' : 'black'); 
-        ellipse(node.x, node.y, 25, 25);
 
-        fill('white');
-            textSize(14);
-            text(node.name, node.x, node.y);
+    for (let node of nodes) {
+      fill(node == selectedNode ? 'red' : 'black');  
+      ellipse(node.x, node.y, 25, 25);
+
+      fill('white');
+      textSize(14);
+      text(node.name, node.x, node.y);
     }
   }
 }
-
 function mousePressed() {
   if(mouseX<=0 || mouseX>width ||mouseY<=0 || mouseY> height || !clicky){
     return;
@@ -144,6 +148,7 @@ function getClickedEdge(x,y){
 
 
 function clearGraph() {
+    arestasPercorridas.length = 0;
     nodes.length = 0;
     edges = new Map()
     edgcount = 0
@@ -254,9 +259,12 @@ function vizinhoMaisProximo(){
     let nodeChoice = [-1];
     let currentChoice;
     let currentNode;
-    let currentEdges;
+    let currentEdges = [];
     let i;
     let done = false;
+    let aux;
+
+    arestasPercorridas.length = 0;
     while(caminho.length != 0){
       console.log(nodeChoice);
       currentNode = caminho.at(-1);
@@ -264,22 +272,36 @@ function vizinhoMaisProximo(){
       currentEdges = edges.get(currentNode);
       if(caminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)) break;
       for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
-      if(i==currentEdges.length) caminho.pop();
+      if(i==currentEdges.length) {
+        caminho.pop();
+        if (arestasPercorridas.length > 0) arestasPercorridas.pop();  
+      }
       else{
         nodeChoice.push(i);
         nodeChoice.push(-1);
         caminho.push(currentEdges[i][0]);
         peso += currentEdges[i][1];
+        arestasPercorridas.push([currentNode.name, currentEdges[i][0].name]);
+        console.log("Arestas percorridas:", arestasPercorridas);
       }
       console.log(currentNode);
       console.log(i);
     }
+    arestasPercorridas.push([caminho[caminho.length - 1].name, caminho[0].name]);
+    console.log("Arestas Percorridas:" , arestasPercorridas);
     console.log(currentEdges);
     for( let c of caminho){
       console.log(c.name);
     }
     selectedNode = null;
+
+    redraw(); 
     return peso;
   }
 }
+
+
+
+
+
  
