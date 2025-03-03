@@ -155,6 +155,7 @@ function clearGraph() {
     selectedNode = null;
     selectedEdge = null;
     nodeCount = 1;
+    caminhoUpdate();
     updateVertexCount(); 
     updateEdgeCount();
     redraw();
@@ -168,6 +169,17 @@ function updateVertexCount() {
 function updateEdgeCount(){
     document.getElementById('edge-count').innerText = `Número de Arestas: ${edgcount}`;
 }
+
+function caminhoUpdate() {
+  if (arestasPercorridas.length > 0) {
+    let caminho = arestasPercorridas.map(aresta => aresta.join('-')).join(' -> ');
+    document.getElementById('solAlgoritmo').innerText = "Caminho Solução: " + caminho;
+  }
+  else{
+    document.getElementById("solAlgoritmo").innerText = "Caminho Solução: ...";
+  }
+}
+
 
 
 function nodeRemove(){
@@ -294,7 +306,7 @@ function vizinhoMaisProximo(){
       console.log(c.name);
     }
     selectedNode = null;
-
+    caminhoUpdate();
     redraw(); 
     return peso;
   }
