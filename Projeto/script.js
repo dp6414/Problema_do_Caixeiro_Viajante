@@ -28,7 +28,6 @@ function draw() {
     strokeWeight(4); 
     textSize(13);    
     textAlign(CENTER, CENTER);  
-
     for (let [node1, value] of edges) {
       for (let no of value) {
         let node2 = no[0];
@@ -43,22 +42,25 @@ function draw() {
 
         stroke(percorrida ? 'red' : 'black');  
         line(node1.x, node1.y, node2.x, node2.y);
-        
+        strokeWeight(2); 
         if (m > 0) {
           text(peso, mx + 15, my - 15);  
         } else {
           text(peso, mx - 10, my - 10);  
         }
+        strokeWeight(4); 
+        stroke('black');
       }
     }
 
     for (let node of nodes) {
       fill(node == selectedNode ? 'red' : 'black');  
       ellipse(node.x, node.y, 25, 25);
-
+      noStroke();
       fill('white');
       textSize(14);
       text(node.name, node.x, node.y);
+      stroke('black');
     }
   }
 }
@@ -116,7 +118,7 @@ function mousePressed() {
 function belongsToEdge(node1,node2,x,y){
   let m = (node2.y - node1.y) / (node2.x - node1.x); 
   let b = node1.y - m * node1.x;
-
+  if(x<Math.min(node1.x,node2.x) || x>Math.max(node1.x,node2.x) || x<Math.min(node1.y,node2.y) || y>Math.max(node1.y,node2.y)) return false;
   for(let xs = x-10; xs<x+10; xs++){
     for(let ys = y-10; ys<y+10; ys++){
       if (Math.floor(xs * m + b) == Math.floor(ys)) return true;
@@ -171,12 +173,12 @@ function updateEdgeCount(){
 }
 
 function caminhoUpdate() {
-  if (arestasPercorridas.length > 0) {
-    let caminho = arestasPercorridas.map(aresta => aresta.join('-')).join(' -> ');
-    document.getElementById('solAlgoritmo').innerText = "Caminho Solução: " + caminho;
+  if (caminho.length > 0) {
+    let out = caminho.map(a => a.name).join(' -> ');
+    document.getElementById('solAlgoritmo').innerText = "Caminho: " + out;
   }
   else{
-    document.getElementById("solAlgoritmo").innerText = "Caminho Solução: ...";
+    document.getElementById("solAlgoritmo").innerText = "";
   }
 }
 
@@ -273,8 +275,6 @@ function vizinhoMaisProximo(){
     let currentNode;
     let currentEdges = [];
     let i;
-    let done = false;
-    let aux;
 
     arestasPercorridas.length = 0;
     while(caminho.length != 0){
@@ -299,7 +299,9 @@ function vizinhoMaisProximo(){
       console.log(currentNode);
       console.log(i);
     }
-    arestasPercorridas.push([caminho[caminho.length - 1].name, caminho[0].name]);
+    if(caminho.length>0){
+      arestasPercorridas.push([caminho[caminho.length - 1].name, caminho[0].name]);
+    }
     console.log("Arestas Percorridas:" , arestasPercorridas);
     console.log(currentEdges);
     for( let c of caminho){
