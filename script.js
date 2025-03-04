@@ -121,7 +121,9 @@ function belongsToEdge(node1,node2,x,y){
   if(x<Math.min(node1.x,node2.x) || x>Math.max(node1.x,node2.x) || x<Math.min(node1.y,node2.y) || y>Math.max(node1.y,node2.y)) return false;
   for(let xs = x-10; xs<x+10; xs++){
     for(let ys = y-10; ys<y+10; ys++){
-      if (Math.floor(xs * m + b) == Math.floor(ys)) return true;
+      if(xs>Math.min(node1.x,node2.x) && xs<Math.max(node1.x,node2.x) && ys>Math.min(node1.y,node2.y) && ys<Math.max(node1.y,node2.y)){
+        if (Math.floor(xs * m + b) == Math.floor(ys)) return true;
+      }
     }
   }
   return false;
@@ -313,9 +315,3 @@ function vizinhoMaisProximo(){
     return peso;
   }
 }
-
-
-
-
-
- 
