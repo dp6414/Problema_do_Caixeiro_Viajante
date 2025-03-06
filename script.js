@@ -12,7 +12,6 @@ let ctx = null;
 let activePopup = false;
 let tempEdge = null;
 let caminho = [];
-let arestasPercorridas = [];
 
 
 
@@ -35,12 +34,15 @@ function draw() {
         mx = (node1.x + node2.x) / 2;
         my = (node1.y + node2.y) / 2;
         m = (node2.y - node1.y) / (node2.x - node1.x);
-
-        let percorrida = arestasPercorridas.some(a => 
-          (a[0] === node1.name && a[1] === node2.name) || (a[0] === node2.name && a[1] === node1.name)
-        );
-
-        stroke(percorrida ? 'red' : 'black');  
+        if(caminho.includes(node1) || caminho.includes(node2)){
+          let i = caminho.indexOf(node1);
+          if(caminho.at(i-1) == node2 || caminho.at((i+1)%caminho.length) == node2){
+            stroke('red');
+          }
+          else{
+            stroke('black');
+          }
+        }
         line(node1.x, node1.y, node2.x, node2.y);
         strokeWeight(2); 
         if (m > 0) {
@@ -152,7 +154,6 @@ function getClickedEdge(x,y){
 
 
 function clearGraph() {
-    arestasPercorridas.length = 0;
     nodes.length = 0;
     edges = new Map()
     edgcount = 0
@@ -270,15 +271,13 @@ function vizinhoMaisProximo(){
   if(selectedNode != null){  
     orderArestas();
     let peso = 0;
-    caminho = [];
-    caminho.push(selectedNode);
+    caminho = [selectedNode];
     let nodeChoice = [-1];
     let currentChoice;
     let currentNode;
     let currentEdges = [];
     let i;
 
-    arestasPercorridas.length = 0;
     while(caminho.length != 0){
       console.log(nodeChoice);
       currentNode = caminho.at(-1);
@@ -288,24 +287,14 @@ function vizinhoMaisProximo(){
       for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
       if(i==currentEdges.length) {
         caminho.pop();
-        if (arestasPercorridas.length > 0) arestasPercorridas.pop();  
       }
       else{
         nodeChoice.push(i);
         nodeChoice.push(-1);
         caminho.push(currentEdges[i][0]);
         peso += currentEdges[i][1];
-        arestasPercorridas.push([currentNode.name, currentEdges[i][0].name]);
-        console.log("Arestas percorridas:", arestasPercorridas);
       }
-      console.log(currentNode);
-      console.log(i);
     }
-    if(caminho.length>0){
-      arestasPercorridas.push([caminho[caminho.length - 1].name, caminho[0].name]);
-    }
-    console.log("Arestas Percorridas:" , arestasPercorridas);
-    console.log(currentEdges);
     for( let c of caminho){
       console.log(c.name);
     }
