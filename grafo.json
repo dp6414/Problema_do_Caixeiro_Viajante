@@ -1,0 +1,22 @@
+{
+    "nodes": [
+      { "x": 335, "y": 516.4583435058594, "name": "C" },
+      { "x": 442, "y": 341.4583435058594, "name": "D" },
+      { "x": 671, "y": 525.4583435058594, "name": "B" },
+      { "x": 504, "y": 624.4583435058594, "name": "A" },
+      { "x": 584, "y": 340.4583435058594, "name": "E" }
+    ],
+    "edges": [
+      { "from": "A", "to": "B", "weight":2 },
+      { "from": "A", "to": "C", "weight":8 },
+      { "from": "A", "to": "D", "weight":4 },
+      { "from": "A", "to": "E", "weight":6 },
+      { "from": "B", "to": "C", "weight":7 },
+      { "from": "B", "to": "D", "weight":3 },
+      { "from": "B", "to": "E", "weight":6 },
+      { "from": "C", "to": "D", "weight":9 },
+      { "from": "C", "to": "E", "weight":8 },
+      { "from": "D", "to": "E", "weight":5 }
+    ]
+
+  }

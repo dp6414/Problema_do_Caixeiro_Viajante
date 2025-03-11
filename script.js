@@ -238,6 +238,7 @@ window.onload = function() {
   document.getElementById('delAresta').addEventListener('click', delAresta);
   popup = document.getElementById("popup");
   document.getElementById('vizinhoMaisProximo').addEventListener('click', vizinhoMaisProximo);
+  document.getElementById('grafoPredefinido').addEventListener('click', carregarGrafoEspecifico);
 }
 
 
@@ -283,6 +284,7 @@ function vizinhoMaisProximo(){
       currentNode = caminho.at(-1);
       currentChoice = nodeChoice.pop()+1;
       currentEdges = edges.get(currentNode);
+      console.log(currentNode);
       if(caminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)) break;
       for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
       if(i==currentEdges.length) {
@@ -303,4 +305,40 @@ function vizinhoMaisProximo(){
     redraw(); 
     return peso;
   }
+}
+
+function carregarGrafoEspecifico() {
+  fetch("grafo.json")
+      .then(response => response.json())
+      .then(data => {
+
+          nodes.length = 0;
+          edges.clear();
+          nodeCount = 0;
+
+          let nodeMap = {};
+
+          data.nodes.forEach(node => {
+              let newNode = { x: node.x, y: node.y, name: node.name };
+              nodes.push(newNode);
+              nodeMap[node.name] = newNode;
+              nodeCount++;
+          })
+
+          data.edges.forEach(edge => {
+              let fromNode = nodeMap[edge.from];
+              let toNode = nodeMap[edge.to];
+              let peso = edge.weight;
+
+              if (!edges.has(fromNode)) edges.set(fromNode, []);
+              edges.get(fromNode).push([toNode, peso]);
+
+              if (!edges.has(toNode)) edges.set(toNode, []);
+              edges.get(toNode).push([fromNode, peso]); 
+          })
+
+          updateVertexCount();
+          updateEdgeCount();
+          redraw();
+      })
 }
