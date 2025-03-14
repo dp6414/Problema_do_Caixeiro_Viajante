@@ -11,6 +11,7 @@ let ctx = null;
 let activePopup = false;
 let tempEdge = null;
 let caminho = [];
+let wichGrafo = 0;
 
 
 
@@ -245,7 +246,14 @@ window.onload = function() {
   popup = document.getElementById("popup");
   document.getElementById('vizinhoMaisProximo').addEventListener('click', vizinhoMaisProximo);
   document.getElementById('forcaBruta').addEventListener('click', bruteForce);
-  document.getElementById('grafoPredefinido').addEventListener('click', carregarGrafoEspecifico);
+  document.getElementById('grafo1').addEventListener('click', function() {
+    wichGrafo = 1;  
+    carregarGrafoEspecifico();     
+  });
+  document.getElementById('grafo2').addEventListener('click',function() {
+    wichGrafo = 2;
+    carregarGrafoEspecifico();
+  })
 }
 
 
@@ -390,17 +398,25 @@ function carregarGrafoEspecifico() {
           nodes.length = 0;
           edges.clear();
           nodeCount = 0;
-
+          let grafoEscolhido;
           let nodeMap = {};
+          switch(wichGrafo){
+            case 1:
+              grafoEscolhido = data.graph1;
+              break;
+            case 2:
+              grafoEscolhido = data.graph2;
+              break;
+          }
 
-          data.nodes.forEach(node => {
+          grafoEscolhido.nodes.forEach(node => {
               let newNode = { x: node.x, y: node.y, name: node.name };
               nodes.push(newNode);
               nodeMap[node.name] = newNode;
               nodeCount++;
           })
 
-          data.edges.forEach(edge => {
+          grafoEscolhido.edges.forEach(edge => {
               let fromNode = nodeMap[edge.from];
               let toNode = nodeMap[edge.to];
               let peso = edge.weight;
