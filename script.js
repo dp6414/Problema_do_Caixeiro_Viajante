@@ -4,7 +4,6 @@ let nodeCount = 1;
 let edges = new Map();
 let selectedNode = null;
 let selectedEdge = null;
-let edgcount = 0;
 var popup;
 let clicky = true; 
 let peso = 0;
@@ -26,6 +25,7 @@ function draw() {
     background(240);  
     strokeWeight(4); 
     textSize(13);    
+    fill('white');
     textAlign(CENTER, CENTER);  
     for (let [node1, value] of edges) {
       for (let no of value) {
@@ -95,7 +95,6 @@ function mousePressed() {
     clickedEdge = getClickedEdge(mouseX,mouseY);
     if(clickedEdge != null){
       pesoPopup();
-      edgcount--;
     }
     else{
       let nodeName = 64;
@@ -156,7 +155,6 @@ function getClickedEdge(x,y){
 function clearGraph() {
     nodes.length = 0;
     edges = new Map()
-    edgcount = 0
     selectedNode = null;
     selectedEdge = null;
     nodeCount = 1;
@@ -168,17 +166,26 @@ function clearGraph() {
 
 
 function updateVertexCount() {
-    document.getElementById('vertex-count').innerText = `Número de Vértices: ${nodes.length}`;
+  document.getElementById('vertex-count').innerText = `Número de Vértices: ${nodes.length}`;
+}
+
+function edgeCount(){
+  let r = 0;
+  for(let [node1,value] of edges){
+    r+=value.length;
   }
+  return r/2;
+}
 
 function updateEdgeCount(){
-    document.getElementById('edge-count').innerText = `Número de Arestas: ${edgcount}`;
+  let edgcount = edgeCount();
+  document.getElementById('edge-count').innerText = `Número de Arestas: ${edgcount}`;
 }
 
 function caminhoUpdate() {
   if (caminho.length > 0) {
     let out = caminho.map(a => a.name).join(' -> ');
-    document.getElementById('solAlgoritmo').innerText = "Caminho: " + out;
+    document.getElementById('solAlgoritmo').innerText = "Caminho: " + out +"\nPeso: " + peso;
   }
   else{
     document.getElementById("solAlgoritmo").innerText = "";
@@ -221,7 +228,6 @@ function inputPeso() {
     edges.get(clickedEdge[0]).push([clickedEdge[1][0], peso]);
     edges.set(clickedEdge[1][0],edges.get(clickedEdge[1][0]).filter(edge => edge[0] != clickedEdge[0]));
     edges.get(clickedEdge[1][0]).push([clickedEdge[0], peso]);
-    edgcount++;
     updateEdgeCount();
   }
 
@@ -238,6 +244,7 @@ window.onload = function() {
   document.getElementById('delAresta').addEventListener('click', delAresta);
   popup = document.getElementById("popup");
   document.getElementById('vizinhoMaisProximo').addEventListener('click', vizinhoMaisProximo);
+  document.getElementById('forcaBruta').addEventListener('click', bruteForce);
   document.getElementById('grafoPredefinido').addEventListener('click', carregarGrafoEspecifico);
 }
 
@@ -269,9 +276,9 @@ function orderArestas(){
 }
 
 function vizinhoMaisProximo(){
+  peso = 0;
   if(selectedNode != null){  
     orderArestas();
-    let peso = 0;
     caminho = [selectedNode];
     let nodeChoice = [-1];
     let currentChoice;
@@ -289,21 +296,89 @@ function vizinhoMaisProximo(){
       for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
       if(i==currentEdges.length) {
         caminho.pop();
+        peso -= edges.get(caminho.at(-1))[nodeChoice.at(-1)][1];
+        console.log("minus");
+        console.log(edges.get(caminho.at(-1))[nodeChoice.at(-1)][1]);
       }
       else{
         nodeChoice.push(i);
         nodeChoice.push(-1);
         caminho.push(currentEdges[i][0]);
         peso += currentEdges[i][1];
+        console.log("plus");
+        console.log(currentEdges[i][1]);
       }
     }
     for( let c of caminho){
       console.log(c.name);
     }
+    console.log(peso);
+    peso += currentEdges.find(e => e[0] == selectedNode)[1];
     selectedNode = null;
     caminhoUpdate();
     redraw(); 
-    return peso;
+  }
+}
+
+function bruteForce(){
+  peso = 0;
+  if(selectedNode != null){  
+    orderArestas();
+    caminho.length = 0;
+    let curCaminho = [selectedNode];
+    let nodeChoice = [-1];
+    let currentChoice;
+    let currentNode;
+    let currentEdges = [];
+    let i;
+    let curPeso = 0;
+
+    while(curCaminho.length != 0){
+      currentNode = curCaminho.at(-1);
+      currentChoice = nodeChoice.pop()+1;
+      currentEdges = edges.get(currentNode);
+      if(curCaminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)){
+        curPeso += currentEdges.find(e => e[0] == selectedNode)[1];
+        console.log("FOUND!");
+        for( let c of curCaminho){
+          console.log(c.name);
+        }
+        console.log(curPeso);
+        if(caminho.length == 0){
+          peso = curPeso;
+          caminho = Array.from(curCaminho);
+        }
+        else if(curPeso<peso){
+          console.log("NICE!");
+          peso = curPeso;
+          caminho = Array.from(curCaminho);
+        }
+        curPeso -= currentEdges.find(e => e[0] == selectedNode)[1];
+        curCaminho.pop();
+        curPeso -= edges.get(curCaminho.at(-1))[nodeChoice.at(-1)][1];
+        continue;
+      }
+      for(i=currentChoice; i<currentEdges.length && curCaminho.includes(currentEdges[i][0]); i++);
+      if(i==currentEdges.length || (caminho.length != 0 && curPeso > peso)) {
+        curCaminho.pop();
+        if(nodeChoice.length != 0 && curCaminho.length != 0){
+          curPeso -= edges.get(curCaminho.at(-1))[nodeChoice.at(-1)][1];
+        }
+      }
+      else{
+        nodeChoice.push(i);
+        nodeChoice.push(-1);
+        curCaminho.push(currentEdges[i][0]);
+        curPeso += currentEdges[i][1];
+      }
+    }
+    for( let c of caminho){
+      console.log(c.name);
+    }
+    console.log(peso);
+    selectedNode = null;
+    caminhoUpdate();
+    redraw(); 
   }
 }
 
