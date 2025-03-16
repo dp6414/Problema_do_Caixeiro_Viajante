@@ -9,33 +9,44 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Problema do Caixeiro Viajante</h1>
-   <div id="popup" class="popup">
-        <div class="popup-content">
-            <h2>Peso da Aresta</h2>
-            <input type="text" id="inputPeso" pattern="[0-9]*" placeholder="valor">
-            <div></div>
-            <div>
-                <button id="delAresta" class="redButton">Eliminar</button>
-                <button id="inAresta">Confirmar</button>
-            </div>
-        </div>
+    <div class="header">
+        <h1>Problema do Caixeiro Viajante</h1>
     </div>
-    <div class="container">
+        <div id="popup" class="popup">
+                <div class="popup-content">
+                    <h2>Peso da Aresta</h2>
+                    <input type="text" id="inputPeso" pattern="[0-9]*" placeholder="valor">
+                    <div></div>
+                    <div>
+                        <button id="delAresta" class="redButton">Eliminar</button>
+                        <button id="inAresta">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+    <div class="left">
+        <img src="./exemplo_1.png" alt="grafo1" id="grafo1">
+        <img src="./Captura de ecrã 2025-03-14, às 11.57.06.png" alt="grafo2" id="grafo2">
+    </div>
+    <div class="right">
+    
+    </div>
+    <div class="center">
         <div id="canvas-container"></div>
-        <div><p id="solAlgoritmo"></p></div>
+        <p id="solAlgoritmo"> </p>
+    </div>
+    <div class="buttons1">
         <div class="butoesdealgoritmo" id="right-controls">
             <button id="vizinhoMaisProximo">Vizinho Mais Proximo</button>
             <button id="forcaBruta">Força Bruta</button>
             <button id="maisBarato">Mais Barato</button>
         </div>
     </div>
-    <div id="controls">
+    <div class="buttons2">
         <button id="clear-btn">Limpar Grafo</button>
         <button id="clearVertex-btn">Eliminar Vértice</button>
-        <button id="grafo1">Carregar Grafo 1</button>
-        <button id="grafo2">Carregar Grafo 2</button>
     </div>
-    <p id="vertex-count">Número de Vértices: 0</p>
-    <p id="edge-count">Número de Arestas: 0</p>
+    <div class="infos">
+        <p id="vertex-count">Número de Vértices: 0</p>
+        <p id="edge-count">Número de Arestas: 0</p>
+    </div>
 </body>

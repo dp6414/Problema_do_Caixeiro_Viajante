@@ -13,8 +13,6 @@ let tempEdge = null;
 let caminho = [];
 let wichGrafo = 0;
 
-
-
 function setup() {
   let canvas = createCanvas(1000, 800);
   canvas.parent('canvas-container'); 
