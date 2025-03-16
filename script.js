@@ -262,11 +262,11 @@ function pesoPopup() {
     
 }
 
-// Function to hide the popup
 function hidePopup() {
     popup.style.display = "none";
     clicky = true;
     activePopup=false;
+    document.getElementById('inputPeso').value = '';
 }
 
 window.addEventListener("click", function (event) {
@@ -425,7 +425,6 @@ function carregarGrafoEspecifico() {
               if (!edges.has(toNode)) edges.set(toNode, []);
               edges.get(toNode).push([fromNode, peso]); 
           })
-
           updateVertexCount();
           updateEdgeCount();
           redraw();
