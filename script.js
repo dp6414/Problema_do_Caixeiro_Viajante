@@ -12,6 +12,7 @@ let activePopup = false;
 let tempEdge = null;
 let caminho = [];
 let wichGrafo = 0;
+let performance = 0;
 
 function setup() {
   let canvas = createCanvas(1000, 800);
@@ -184,7 +185,7 @@ function updateEdgeCount(){
 function caminhoUpdate() {
   if (caminho.length > 0) {
     let out = caminho.map(a => a.name).join(' -> ');
-    document.getElementById('solAlgoritmo').innerText = "Caminho: " + out +"\nPeso: " + peso;
+    document.getElementById('solAlgoritmo').innerText = "Caminho: " + out +"\nPeso: " + peso + "\nTempo de resposta: " + performance;
   }
   else{
     document.getElementById("solAlgoritmo").innerText = "";
@@ -282,6 +283,7 @@ function orderArestas(){
 }
 
 function vizinhoMaisProximo(){
+  let start = performance.now();
   peso = 0;
   if(selectedNode != null){  
     orderArestas();
@@ -323,10 +325,13 @@ function vizinhoMaisProximo(){
     selectedNode = null;
     caminhoUpdate();
     redraw(); 
+    let end = performance.now();
+    performance = end - start;
   }
 }
 
 function bruteForce(){
+  let start = performance.now();
   peso = 0;
   if(selectedNode != null){  
     orderArestas();
@@ -385,6 +390,8 @@ function bruteForce(){
     selectedNode = null;
     caminhoUpdate();
     redraw(); 
+    let end = performance.now();
+    performance = end - start;
   }
 }
 
