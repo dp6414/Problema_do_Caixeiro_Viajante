@@ -185,7 +185,7 @@ function updateEdgeCount(){
 function caminhoUpdate() {
   if (caminho.length > 0) {
     let out = caminho.map(a => a.name).join(' -> ');
-    document.getElementById('solAlgoritmo').innerText = "Caminho: " + out +"\nPeso: " + peso + "\nTempo de resposta: " + timeperformance + "ms";
+    document.getElementById('solAlgoritmo').innerText = "Caminho: " + out +"\nPeso: " + peso + "\nTempo de resposta: " + timeperformance.toFixed(3) + "ms";
   }
   else{
     document.getElementById("solAlgoritmo").innerText = "";
