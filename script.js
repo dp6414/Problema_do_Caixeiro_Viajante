@@ -118,7 +118,7 @@ function mousePressed() {
 function belongsToEdge(node1,node2,x,y){
   let m = (node2.y - node1.y) / (node2.x - node1.x); 
   let b = node1.y - m * node1.x;
-  if(x<Math.min(node1.x,node2.x) || x>Math.max(node1.x,node2.x) || x<Math.min(node1.y,node2.y) || y>Math.max(node1.y,node2.y)) return false;
+  if(x<Math.min(node1.x,node2.x)+1 || x>Math.max(node1.x,node2.x)-1 || y<Math.min(node1.y,node2.y)+1 || y>Math.max(node1.y,node2.y)-1) return false;
   for(let xs = x-10; xs<x+10; xs++){
     for(let ys = y-10; ys<y+10; ys++){
       if(xs>Math.min(node1.x,node2.x) && xs<Math.max(node1.x,node2.x) && ys>Math.min(node1.y,node2.y) && ys<Math.max(node1.y,node2.y)){
