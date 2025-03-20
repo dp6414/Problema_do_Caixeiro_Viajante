@@ -4,7 +4,8 @@ body {
                             "esquerda centro direita"
                             "buttons1 buttons1 buttons1"
                             "buttons2 buttons2 buttons2"
-                            "infos infos infos";
+                            "infos infos infos"
+                            "buttons3 buttons3 buttons3";
     font-family: Arial, sans-serif;
     grid-template-columns: 1fr 3fr 1fr;
     background-color: whitesmoke;
@@ -112,6 +113,14 @@ button:hover {
     margin-top: 5px;
 }
 
+.buttons3{
+    grid-area: buttons3;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 5px;
+}
+
 .butoesdealgoritmo{
     display: flex;
     justify-content: center;
@@ -152,8 +161,10 @@ button:hover {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    width: 300px;
+    width: 800px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    max-height: 80vh; /* Ensures it doesn't exceed 80% of the viewport height */
+    overflow-y: auto; /* Enables scrolling if the content is too long */
 }
 
 #popup_buttons{

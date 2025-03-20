@@ -250,8 +250,12 @@ window.onload = function() {
 	document.getElementById('inAresta').addEventListener('click', inputPeso);
 	document.getElementById('delAresta').addEventListener('click', delAresta);
 	popup = document.getElementById("popup");
+	popup2 = document.getElementById("popup2");
 	document.getElementById('vizinhoMaisProximo').addEventListener('click', vizinhoMaisProximo);
 	document.getElementById('forcaBruta').addEventListener('click', bruteForce);
+	document.getElementById('inCode').addEventListener('click', loadGrafo);
+	document.getElementById('gerarCode').addEventListener('click', gerarCodigo);
+	document.getElementById('copyCode').addEventListener('click', copyCode);
 	document.getElementById('grafo1').addEventListener('click', function() {
 		wichGrafo = 1;  
 		carregarGrafoEspecifico();     
@@ -263,11 +267,22 @@ window.onload = function() {
 }
 
 
+function popupCode() {
+	popup2.style.display = "flex";
+	clicky = false;
+	activePopup = true;
+}
+
+function hidePopupCode() {
+	popup2.style.display = "none";
+	clicky = true;
+	activePopup=false;
+}
+
 function pesoPopup() {
 		popup.style.display = "flex";
 		clicky = false;
 		activePopup = true;
-		
 }
 
 function hidePopup() {
@@ -280,6 +295,12 @@ function hidePopup() {
 window.addEventListener("click", function (event) {
 	if (event.target === popup) {
 			hidePopup();
+	}
+});
+
+window.addEventListener("click", function (event) {
+	if (event.target === popup2) {
+			hidePopupCode();
 	}
 });
 
@@ -335,6 +356,12 @@ function vizinhoMaisProximo(){
 		caminhoUpdate();
 		redraw(); 
 	}
+}
+
+function b64EncodeUnicode(str) {
+    return btoa(
+        new TextEncoder().encode(str).reduce((acc, byte) => acc + String.fromCharCode(byte), '')
+    );
 }
 
 function bruteForce(){
@@ -445,6 +472,7 @@ function carregarGrafoEspecifico() {
 					caminhoUpdate();
 					updateEdgeCount();
 					redraw();
+					console.log(nodes);
 			})
 }
 
@@ -454,13 +482,80 @@ function saveGrafo(){
 	for(let node1 of nodes){
 		str += node1.name + "," + node1.x.toString() + "," + node1.y.toString() + "|";
 	}
+	str = str.slice(0,-1);
 	str += ")"
 	for(let [node1,value] of edges){
-		str += node1.name + "," + node1.x.toString() + "," + node1.y.toString() + ":";
+		str += node1.name + ":";
 		for(let [node2,peso] of value){
-			str += "[" + node2.name + "," + node2.x.toString() + "," + node2.y.toString() + "=" + peso.toString() +"]"
+			str += node2.name + "=" + peso + ","
 		}
+		str = str.slice(0,-1);
 		str+= "|"
 	}
-	console.log(str);
+	str = str.slice(0,-1);
+	return b64EncodeUnicode(str);
+}
+
+function gerarCodigo(){
+	document.getElementById('codigoGerado').innerText = saveGrafo();
+	popupCode();
+}
+
+function decodeBase64(s) {
+    let b64Text = s.value.trim(); // Remove spaces
+    try {
+        // Decode Base64 safely
+        let decoded = atob(b64Text);
+        return decoded
+    } catch (error) {
+        console.error("Invalid Base64:", error);
+    }
+}
+
+function loadGrafo(){
+	const s = document.getElementById('codes');
+	nodes.length = 0;
+	edges.clear();
+	nodeCount = 0;
+	let nodeMap = {};
+	let code = decodeBase64(s);
+	let ns = code.match(/\(.*\)/).join("").slice(1,-1);
+	let es = code.slice(code.indexOf(")")+1);
+	ns = ns.split("|");
+	console.log(ns)
+	for(let n of ns){
+		let node = n.split(",");
+		let newNode = { name: node[0], x: Number(node[1]), y: Number(node[2])};
+		nodeMap[node[0]] = newNode;
+		nodes.push(newNode);
+	}
+	es = es.split("|");
+	for(let e of es){
+		let [node1,v] = e.split(":");
+		v = v.split(",")
+		for(let no of v){
+			let [node2,peso] = no.split("=");
+			peso = Number(peso);
+			let fromNode = nodeMap[node1];
+			let toNode = nodeMap[node2];
+			if (!edges.has(fromNode)) edges.set(fromNode, []);
+			if (!edges.has(toNode)) edges.set(toNode, []);
+			if (!edges.get(fromNode).some(no => no[0] == toNode)){
+				edges.get(fromNode).push([toNode, peso]);
+				edges.get(toNode).push([fromNode, peso]);
+			}
+		}
+	}
+	console.log(nodes);
+	updateVertexCount();
+	caminho = []
+	caminhoUpdate();
+	updateEdgeCount();
+	redraw();
+}
+
+function copyCode(){
+	let text = document.getElementById('codigoGerado').innerText;
+	navigator.clipboard.writeText(text)
+	hidePopupCode();
 }
