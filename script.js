@@ -253,7 +253,10 @@ window.onload = function() {
 	popup2 = document.getElementById("popup2");
 	document.getElementById('vizinhoMaisProximo').addEventListener('click', vizinhoMaisProximo);
 	document.getElementById('forcaBruta').addEventListener('click', bruteForce);
-	document.getElementById('inCode').addEventListener('click', loadGrafo);
+	document.getElementById('inCode').addEventListener('click', function() {
+		loadGrafo();
+		document.getElementById('codes').value= '';
+	});
 	document.getElementById('gerarCode').addEventListener('click', gerarCodigo);
 	document.getElementById('copyCode').addEventListener('click', copyCode);
 	document.getElementById('grafo1').addEventListener('click', function() {
