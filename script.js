@@ -472,7 +472,6 @@ function carregarGrafoEspecifico() {
 					caminhoUpdate();
 					updateEdgeCount();
 					redraw();
-					console.log(nodes);
 			})
 }
 
@@ -484,15 +483,17 @@ function saveGrafo(){
 	}
 	str = str.slice(0,-1);
 	str += ")"
-	for(let [node1,value] of edges){
-		str += node1.name + ":";
-		for(let [node2,peso] of value){
-			str += node2.name + "=" + peso + ","
+	if(edges.size>0){
+		for(let [node1,value] of edges){
+			str += node1.name + ":";
+			for(let [node2,peso] of value){
+				str += node2.name + "=" + peso + ","
+			}
+			str = str.slice(0,-1);
+			str+= "|"
 		}
 		str = str.slice(0,-1);
-		str+= "|"
 	}
-	str = str.slice(0,-1);
 	return b64EncodeUnicode(str);
 }
 
@@ -522,31 +523,31 @@ function loadGrafo(){
 	let ns = code.match(/\(.*\)/).join("").slice(1,-1);
 	let es = code.slice(code.indexOf(")")+1);
 	ns = ns.split("|");
-	console.log(ns)
 	for(let n of ns){
 		let node = n.split(",");
 		let newNode = { name: node[0], x: Number(node[1]), y: Number(node[2])};
 		nodeMap[node[0]] = newNode;
 		nodes.push(newNode);
 	}
-	es = es.split("|");
-	for(let e of es){
-		let [node1,v] = e.split(":");
-		v = v.split(",")
-		for(let no of v){
-			let [node2,peso] = no.split("=");
-			peso = Number(peso);
-			let fromNode = nodeMap[node1];
-			let toNode = nodeMap[node2];
-			if (!edges.has(fromNode)) edges.set(fromNode, []);
-			if (!edges.has(toNode)) edges.set(toNode, []);
-			if (!edges.get(fromNode).some(no => no[0] == toNode)){
-				edges.get(fromNode).push([toNode, peso]);
-				edges.get(toNode).push([fromNode, peso]);
+	if(es.length>0){
+		es = es.split("|");
+		for(let e of es){
+			let [node1,v] = e.split(":");
+			v = v.split(",")
+			for(let no of v){
+				let [node2,peso] = no.split("=");
+				peso = Number(peso);
+				let fromNode = nodeMap[node1];
+				let toNode = nodeMap[node2];
+				if (!edges.has(fromNode)) edges.set(fromNode, []);
+				if (!edges.has(toNode)) edges.set(toNode, []);
+				if (!edges.get(fromNode).some(no => no[0] == toNode)){
+					edges.get(fromNode).push([toNode, peso]);
+					edges.get(toNode).push([fromNode, peso]);
+				}
 			}
 		}
 	}
-	console.log(nodes);
 	updateVertexCount();
 	caminho = []
 	caminhoUpdate();
