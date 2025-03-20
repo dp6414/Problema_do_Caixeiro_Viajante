@@ -253,6 +253,7 @@ window.onload = function() {
 	popup2 = document.getElementById("popup2");
 	document.getElementById('vizinhoMaisProximo').addEventListener('click', vizinhoMaisProximo);
 	document.getElementById('forcaBruta').addEventListener('click', bruteForce);
+	document.getElementById('maisBarato').addEventListener('click', maisBarato);
 	document.getElementById('inCode').addEventListener('click', loadGrafo);
 	document.getElementById('gerarCode').addEventListener('click', gerarCodigo);
 	document.getElementById('copyCode').addEventListener('click', copyCode);
@@ -428,6 +429,110 @@ function bruteForce(){
 		redraw(); 
 	}
 	saveGrafo();
+}
+
+function getLowestCost(curEdge){
+	//curEdge tem que estar ordenado
+	let lowPeso = Infinity;
+	let lowEdge;
+	for(let [node1,v] of curEdge){
+		if(lowPeso >v[0][1]){
+			lowPeso=v[0][1];
+			lowEdge=[node1,v[0]];
+		}
+	}
+	curEdge.get(lowEdge[0]).shift();
+	if(curEdge.get(lowEdge[0]).length==0) curEdge.delete(lowEdge[0]);
+	return lowEdge;
+}
+
+function getMoreEdges(usableEdges,tempEdges,n){
+	for(let i=0; i<n;i++){
+		let lowEdge = getLowestCost(tempEdges);
+		if(!usableEdges.has(lowEdge[0])) usableEdges.set(lowEdge[0],[]);
+		if(!usableEdges.has(lowEdge[1][0])) usableEdges.set(lowEdge[1][0],[]);
+		if(!usableEdges.get(lowEdge[0]).some(no=>no[0]==lowEdge[1][0])){
+			usableEdges.get(lowEdge[0]).push(lowEdge[1]);
+			usableEdges.get(lowEdge[1][0]).push([lowEdge[0],lowEdge[1][1]]);
+		}
+		else i--;
+	}
+}
+
+function copyDict(dict){
+	let newDict = new Map();
+	for(let [key,v] of dict){
+		newDict.set(key,Array.from(v));
+	}
+	return newDict
+}
+
+function getMinimumEdges(usableEdges,tempEdges){
+	//tempEdges tem que estar ordenado
+	while(usableEdges.size<nodes.length){
+		getMoreEdges(usableEdges,tempEdges,1);
+	}
+}
+
+function maisBarato(){
+	let start = performance.now();
+	caminho=[];
+	orderArestas();
+	let tempEdges = copyDict(edges);
+	let usableEdges = new Map();
+	getMinimumEdges(usableEdges,tempEdges)
+	let currentEdges;
+	while(caminho.length==0 && tempEdges.size!=0){
+		console.log("start")
+		console.log(usableEdges)
+		peso=0;
+		if(selectedNode != null){  
+			caminho = [selectedNode];
+			let nodeChoice = [-1];
+			let currentChoice;
+			let currentNode;
+			currentEdges = [];
+			let i;
+			while(caminho.length != 0){
+				currentNode = caminho.at(-1);
+				if(usableEdges.has(currentNode)){
+					currentEdges = usableEdges.get(currentNode);
+					currentChoice = nodeChoice.pop()+1;
+					if(caminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)){ 
+						console.log("yey")
+						break
+					};
+					for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
+					if(i==currentEdges.length && caminho.length != 0) {
+						caminho.pop();
+						if(nodeChoice.length){
+							peso -= usableEdges.get(caminho.at(-1))[nodeChoice.at(-1)][1];
+						}
+					}
+					else{
+						nodeChoice.push(i);
+						nodeChoice.push(-1);
+						caminho.push(currentEdges[i][0]);
+						peso += currentEdges[i][1];
+					}
+				}
+				else break;
+			}
+			console.log("caminho")
+			getMoreEdges(usableEdges,tempEdges,1);
+			console.log(caminho)
+			console.log(tempEdges.size)
+		}
+	}
+	peso += currentEdges.find(e => e[0] == selectedNode)[1];
+	console.log("fuck")
+	console.log(usableEdges)
+	console.log(edges)
+	selectedNode = null;
+	let end = performance.now();
+	timeperformance = end - start;
+	caminhoUpdate();
+	redraw(); 
 }
 
 function carregarGrafoEspecifico() {
