@@ -221,6 +221,7 @@ function nodeRemove(){
 function delAresta(){
 	edges.set(clickedEdge[0],edges.get(clickedEdge[0]).filter(edge => edge[0] != clickedEdge[1][0]));
 	edges.set(clickedEdge[1][0],edges.get(clickedEdge[1][0]).filter(edge => edge[0] != clickedEdge[0]));
+	updateEdgeCount();
 	hidePopup();
 }
 
@@ -437,28 +438,26 @@ function bruteForce(){
 function getLowestCost(curEdge){
 	//curEdge tem que estar ordenado
 	let lowPeso = Infinity;
-	let lowEdge;
+	let lowEdges;
 	for(let [node1,v] of curEdge){
 		if(lowPeso >v[0][1]){
 			lowPeso=v[0][1];
-			lowEdge=[node1,v[0]];
+			lowEdges=[[node1,v[0]]];
 		}
+		else if (lowPeso == v[0][1]) lowEdges.push([node1,v[0]]);
 	}
-	curEdge.get(lowEdge[0]).shift();
-	if(curEdge.get(lowEdge[0]).length==0) curEdge.delete(lowEdge[0]);
-	return lowEdge;
+	return lowEdges;
 }
 
-function getMoreEdges(usableEdges,tempEdges,n){
-	for(let i=0; i<n;i++){
-		let lowEdge = getLowestCost(tempEdges);
-		if(!usableEdges.has(lowEdge[0])) usableEdges.set(lowEdge[0],[]);
-		if(!usableEdges.has(lowEdge[1][0])) usableEdges.set(lowEdge[1][0],[]);
+function getMoreEdges(usableEdges,tempEdges){
+	let lowEdges = getLowestCost(tempEdges);
+	for(let lowEdge of lowEdges){
+		tempEdges.get(lowEdge[0]).shift();
+		if(tempEdges.get(lowEdge[0]).length==0) tempEdges.delete(lowEdge[0]);
 		if(!usableEdges.get(lowEdge[0]).some(no=>no[0]==lowEdge[1][0])){
 			usableEdges.get(lowEdge[0]).push(lowEdge[1]);
 			usableEdges.get(lowEdge[1][0]).push([lowEdge[0],lowEdge[1][1]]);
 		}
-		else i--;
 	}
 }
 
@@ -472,8 +471,11 @@ function copyDict(dict){
 
 function getMinimumEdges(usableEdges,tempEdges){
 	//tempEdges tem que estar ordenado
-	while(usableEdges.size<nodes.length){
-		getMoreEdges(usableEdges,tempEdges,1);
+	for(let n of nodes){
+		usableEdges.set(n,[]);
+	}
+	while([...usableEdges.values()].some(value => value.length<2)){
+		getMoreEdges(usableEdges,tempEdges);
 	}
 }
 
@@ -484,18 +486,21 @@ function maisBarato(){
 	let tempEdges = copyDict(edges);
 	let usableEdges = new Map();
 	getMinimumEdges(usableEdges,tempEdges)
+	console.log("balls")
+	console.log(usableEdges)
 	let currentEdges;
+	let currentChoice;
+	let currentNode;
+	let i;
+	let nodeChoice
 	while(caminho.length==0 && tempEdges.size!=0){
 		console.log("start")
 		console.log(usableEdges)
 		peso=0;
 		if(selectedNode != null){  
 			caminho = [selectedNode];
-			let nodeChoice = [-1];
-			let currentChoice;
-			let currentNode;
+			nodeChoice = [-1];
 			currentEdges = [];
-			let i;
 			while(caminho.length != 0){
 				currentNode = caminho.at(-1);
 				if(usableEdges.has(currentNode)){
@@ -522,9 +527,9 @@ function maisBarato(){
 				else break;
 			}
 			console.log("caminho")
-			getMoreEdges(usableEdges,tempEdges,1);
+			getMoreEdges(usableEdges,tempEdges);
 			console.log(caminho)
-			console.log(tempEdges.size)
+			console.log(tempEdges)
 		}
 	}
 	peso += currentEdges.find(e => e[0] == selectedNode)[1];
