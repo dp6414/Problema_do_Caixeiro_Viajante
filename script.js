@@ -91,6 +91,7 @@ function mousePressed() {
 			selectedNode = null;
 			updateEdgeCount();
 		}
+		else selectedNode = null;
 	} else {
 		clickedEdge = getClickedEdge(mouseX,mouseY);
 		if(clickedEdge != null){
@@ -328,32 +329,22 @@ function vizinhoMaisProximo(){
 		let i;
 
 		while(caminho.length != 0){
-			console.log(nodeChoice);
 			currentNode = caminho.at(-1);
 			currentChoice = nodeChoice.pop()+1;
 			currentEdges = edges.get(currentNode);
-			console.log(currentNode);
 			if(caminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)) break;
 			for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
 			if(i==currentEdges.length) {
 				caminho.pop();
 				peso -= edges.get(caminho.at(-1))[nodeChoice.at(-1)][1];
-				console.log("minus");
-				console.log(edges.get(caminho.at(-1))[nodeChoice.at(-1)][1]);
 			}
 			else{
 				nodeChoice.push(i);
 				nodeChoice.push(-1);
 				caminho.push(currentEdges[i][0]);
 				peso += currentEdges[i][1];
-				console.log("plus");
-				console.log(currentEdges[i][1]);
 			}
 		}
-		for( let c of caminho){
-			console.log(c.name);
-		}
-		console.log(peso);
 		peso += currentEdges.find(e => e[0] == selectedNode)[1];
 		selectedNode = null;
 		let end = performance.now();
@@ -389,17 +380,11 @@ function bruteForce(){
 			currentEdges = edges.get(currentNode);
 			if(curCaminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)){
 				curPeso += currentEdges.find(e => e[0] == selectedNode)[1];
-				console.log("FOUND!");
-				for( let c of curCaminho){
-					console.log(c.name);
-				}
-				console.log(curPeso);
 				if(caminho.length == 0){
 					peso = curPeso;
 					caminho = Array.from(curCaminho);
 				}
 				else if(curPeso<peso){
-					console.log("NICE!");
 					peso = curPeso;
 					caminho = Array.from(curCaminho);
 				}
@@ -422,10 +407,6 @@ function bruteForce(){
 				curPeso += currentEdges[i][1];
 			}
 		}
-		for( let c of caminho){
-			console.log(c.name);
-		}
-		console.log(peso);
 		selectedNode = null;
 		let end = performance.now();
 		timeperformance = end - start;
@@ -480,62 +461,48 @@ function getMinimumEdges(usableEdges,tempEdges){
 }
 
 function maisBarato(){
+	if(!selectedNode) return;
 	let start = performance.now();
 	caminho=[];
 	orderArestas();
 	let tempEdges = copyDict(edges);
 	let usableEdges = new Map();
 	getMinimumEdges(usableEdges,tempEdges)
-	console.log("balls")
-	console.log(usableEdges)
 	let currentEdges;
 	let currentChoice;
 	let currentNode;
 	let i;
 	let nodeChoice
 	while(caminho.length==0 && tempEdges.size!=0){
-		console.log("start")
-		console.log(usableEdges)
-		peso=0;
-		if(selectedNode != null){  
-			caminho = [selectedNode];
-			nodeChoice = [-1];
-			currentEdges = [];
-			while(caminho.length != 0){
-				currentNode = caminho.at(-1);
-				if(usableEdges.has(currentNode)){
-					currentEdges = usableEdges.get(currentNode);
-					currentChoice = nodeChoice.pop()+1;
-					if(caminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)){ 
-						console.log("yey")
-						break
-					};
-					for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
-					if(i==currentEdges.length && caminho.length != 0) {
-						caminho.pop();
-						if(nodeChoice.length){
-							peso -= usableEdges.get(caminho.at(-1))[nodeChoice.at(-1)][1];
-						}
-					}
-					else{
-						nodeChoice.push(i);
-						nodeChoice.push(-1);
-						caminho.push(currentEdges[i][0]);
-						peso += currentEdges[i][1];
+		peso=0; 
+		caminho = [selectedNode];
+		nodeChoice = [-1];
+		currentEdges = [];
+		while(caminho.length != 0){
+			currentNode = caminho.at(-1);
+			if(usableEdges.has(currentNode)){
+				currentEdges = usableEdges.get(currentNode);
+				currentChoice = nodeChoice.pop()+1;
+				if(caminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)) break;
+				for(i=currentChoice; i<currentEdges.length && caminho.includes(currentEdges[i][0]); i++);
+				if(i==currentEdges.length && caminho.length != 0) {
+					caminho.pop();
+					if(nodeChoice.length){
+						peso -= usableEdges.get(caminho.at(-1))[nodeChoice.at(-1)][1];
 					}
 				}
-				else break;
+				else{
+					nodeChoice.push(i);
+					nodeChoice.push(-1);
+					caminho.push(currentEdges[i][0]);
+					peso += currentEdges[i][1];
+				}
 			}
-			console.log("caminho")
-			getMoreEdges(usableEdges,tempEdges);
-			console.log(caminho)
-			console.log(tempEdges)
+			else break;
 		}
+		getMoreEdges(usableEdges,tempEdges);
 	}
 	peso += currentEdges.find(e => e[0] == selectedNode)[1];
-	console.log("fuck")
-	console.log(usableEdges)
-	console.log(edges)
 	selectedNode = null;
 	let end = performance.now();
 	timeperformance = end - start;
@@ -584,6 +551,7 @@ function carregarGrafoEspecifico() {
 					caminho = []
 					caminhoUpdate();
 					updateEdgeCount();
+					selectedNode = null;
 					redraw();
 			})
 }
