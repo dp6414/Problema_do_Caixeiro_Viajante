@@ -98,16 +98,11 @@ function mousePressed() {
 			pesoPopup();
 		}
 		else{
-			let nodeName = 64;
-			let rep = true;
-			while(rep){
-				nodeName++;
-				rep = false
-				for (node of nodes){
-					if(node.name == String.fromCharCode(nodeName)) rep = true;
-				}
+			let nodeNumber = 0;
+			for(nodeNumber=0;nodeNumber<nodes.length;nodeNumber++){
+				if("V" + nodeNumber != nodes[nodeNumber].name) break;
 			}
-			nodes.push({ x: mouseX, y: mouseY, name: String.fromCharCode(nodeName)});
+			nodes.splice(nodeNumber,0,{ x: mouseX, y: mouseY, name: "V" + nodeNumber});
 			nodeCount ++;
 			selectedNode = null;
 			caminho = []

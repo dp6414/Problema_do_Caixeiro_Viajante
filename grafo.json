@@ -1,41 +1,41 @@
 {
   "graph1": {
       "nodes": [
-          { "x": 335, "y": 516.4583435058594, "name": "C" },
-          { "x": 442, "y": 341.4583435058594, "name": "D" },
-          { "x": 671, "y": 525.4583435058594, "name": "B" },
-          { "x": 504, "y": 624.4583435058594, "name": "A" },
-          { "x": 584, "y": 340.4583435058594, "name": "E" }
+          { "x": 504, "y": 624.4583435058594, "name": "V0" },
+          { "x": 671, "y": 525.4583435058594, "name": "V1" },
+          { "x": 335, "y": 516.4583435058594, "name": "V2" },
+          { "x": 442, "y": 341.4583435058594, "name": "V3" },
+          { "x": 584, "y": 340.4583435058594, "name": "V4" }
       ],
       "edges": [
-          { "from": "A", "to": "B", "weight": 2 },
-          { "from": "A", "to": "C", "weight": 8 },
-          { "from": "A", "to": "D", "weight": 4 },
-          { "from": "A", "to": "E", "weight": 6 },
-          { "from": "B", "to": "C", "weight": 7 },
-          { "from": "B", "to": "D", "weight": 3 },
-          { "from": "B", "to": "E", "weight": 6 },
-          { "from": "C", "to": "D", "weight": 9 },
-          { "from": "C", "to": "E", "weight": 8 },
-          { "from": "D", "to": "E", "weight": 5 }
+          { "from": "V0", "to": "V1", "weight": 2 },
+          { "from": "V0", "to": "V2", "weight": 8 },
+          { "from": "V0", "to": "V3", "weight": 4 },
+          { "from": "V0", "to": "V4", "weight": 6 },
+          { "from": "V1", "to": "V2", "weight": 7 },
+          { "from": "V1", "to": "V3", "weight": 3 },
+          { "from": "V1", "to": "V4", "weight": 6 },
+          { "from": "V2", "to": "V3", "weight": 9 },
+          { "from": "V2", "to": "V4", "weight": 8 },
+          { "from": "V3", "to": "V4", "weight": 5 }
       ]
   },
 
   "graph2": {
       "nodes": [
-          { "x": 480, "y": 292, "name": "A" },
-          { "x": 345, "y": 529, "name": "B" },
-          { "x": 588, "y": 541, "name": "C" },
-          { "x": 472, "y": 455, "name": "D" }
+          { "x": 480, "y": 292, "name": "V0" },
+          { "x": 345, "y": 529, "name": "V1" },
+          { "x": 588, "y": 541, "name": "V2" },
+          { "x": 472, "y": 455, "name": "V3" }
       ],
 
       "edges": [
-        { "from": "A", "to": "B", "weight": 4 },
-        { "from": "A", "to": "C", "weight": 2 },
-        { "from": "A", "to": "D", "weight": 1 },
-        { "from": "B", "to": "C", "weight": 13 },
-        { "from": "B", "to": "D", "weight": 9 },
-        { "from": "C", "to": "D", "weight": 8 }
+        { "from": "V0", "to": "V1", "weight": 4 },
+        { "from": "V0", "to": "V2", "weight": 2 },
+        { "from": "V0", "to": "V3", "weight": 1 },
+        { "from": "V1", "to": "V2", "weight": 13 },
+        { "from": "V1", "to": "V3", "weight": 9 },
+        { "from": "V2", "to": "V3", "weight": 8 }
       ]
   }
 }
