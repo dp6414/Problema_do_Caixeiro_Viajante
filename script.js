@@ -408,7 +408,6 @@ function bruteForce(){
 		caminhoUpdate();
 		redraw(); 
 	}
-	saveGrafo();
 }
 
 function getLowestCost(curEdge){
@@ -503,6 +502,72 @@ function maisBarato(){
 	timeperformance = end - start;
 	caminhoUpdate();
 	redraw(); 
+}
+
+//Teste Mais Barato + Brute Force
+function maisBaratoExtra(){
+		let start = performance.now();
+		peso = 0;
+		if(selectedNode != null){  
+			orderArestas();
+			caminho.length = 0;
+			caminho=[];
+			let tempEdges = copyDict(edges);
+			let usableEdges = new Map();
+			getMinimumEdges(usableEdges,tempEdges)
+			let curCaminho = [selectedNode];
+			let nodeChoice = [-1];
+			let currentChoice;
+			let currentNode;
+			let currentEdges = [];
+			let i;
+			let curPeso = 0;
+			while(caminho == 0 && tempEdges.length != 0){
+	
+				while(curCaminho.length != 0){
+					currentNode = curCaminho.at(-1);
+					if(usableEdges.has(currentNode)){
+						currentChoice = nodeChoice.pop()+1;
+						currentEdges = usableEdges.get(currentNode);
+						if(curCaminho.length == nodes.length && currentEdges.some(edge => edge[0] == selectedNode)){
+							curPeso += currentEdges.find(e => e[0] == selectedNode)[1];
+							if(caminho.length == 0){
+								peso = curPeso;
+								caminho = Array.from(curCaminho);
+							}
+							else if(curPeso<peso){
+								peso = curPeso;
+								caminho = Array.from(curCaminho);
+							}
+							curPeso -= currentEdges.find(e => e[0] == selectedNode)[1];
+							curCaminho.pop();
+							curPeso -= usableEdges.get(curCaminho.at(-1))[nodeChoice.at(-1)][1];
+							continue;
+						}
+						for(i=currentChoice; i<currentEdges.length && curCaminho.includes(currentEdges[i][0]); i++);
+						if(i==currentEdges.length || (caminho.length != 0 && curPeso > peso)) {
+							curCaminho.pop();
+							if(nodeChoice.length != 0 && curCaminho.length != 0){
+								curPeso -= usableEdges.get(curCaminho.at(-1))[nodeChoice.at(-1)][1];
+							}
+						}
+						else{
+							nodeChoice.push(i);
+							nodeChoice.push(-1);
+							curCaminho.push(currentEdges[i][0]);
+							curPeso += currentEdges[i][1];
+						}
+					}
+					else break;
+				}
+				getMoreEdges(usableEdges,tempEdges);
+			}
+			selectedNode = null;
+			let end = performance.now();
+			timeperformance = end - start;
+			caminhoUpdate();
+			redraw(); 
+		}
 }
 
 function carregarGrafoEspecifico() {
