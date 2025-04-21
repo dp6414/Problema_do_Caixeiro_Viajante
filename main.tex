@@ -1,0 +1,142 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage[absolute,overlay]{textpos}
+
+\title{Problema do Caixeiro Viajante}
+\author{David Gonçalves \\ Pedro Domingues Viana}
+
+\date{Abril 2025}
+
+\begin{document}
+\begin{textblock*}{2cm}(15.1cm,0.5cm) % {largura}(x,y) em cm
+\includegraphics[width=4cm]{ImagemEvento.ashx.jpeg}
+\end{textblock*}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introdução}
+O Problema do Caixeiro Viajante, conhecido em inglês por Travelling Salesman Problem (TSP), é um dos problemas mais clássicos e estudados no campo da otimização combinatória e das ciências da computação. A sua formulação é aparentemente simples: encontrar o caminho mais curto que permita a um vendedor visitar um conjunto de cidades exatamente uma vez e retornar à cidade de origem. No entanto, apesar da simplicidade da sua descrição, trata-se de um problema de elevada complexidade, cuja resolução ótima se torna impraticável à medida que o número de cidades aumenta.
+O TSP não é apenas um exercício teórico, tem aplicações reais em áreas como logística, transportes, circuitos eletrónicos, biologia computacional e muito mais. A sua importância reside no facto de estar relacionado com diversos outros problemas de otimização e na sua utilidade como base para o desenvolvimento e teste de algoritmos.
+Neste relatório, será feita uma abordagem detalhada ao problema, desde a sua definição e complexidade, até aos algoritmos mais comuns utilizados na tentativa de o resolver, tanto em termos exatos como aproximados. Como suporte visual e prático, foi desenvolvida uma aplicação interativa que permite simular diferentes estratégias de resolução sobre grafos personalizados.
+
+\newpage
+
+\section{Conceitos e Resultados de Teoria de Grafos}
+\subsection{Definição de Grafo}
+Um grafo é uma representação de um conjunto de pontos e do
+modo como eles estão ligados. Aos pontos de um grafo chamamos vértices e ás
+ligações entre eles, chamamos arestas.
+
+\subsubsection{Grafo Ponderado}
+Um grafo ponderado é um grafo onde cada aresta possui um valor específico sendo este o seu peso.
+
+\subsubsection{Grafo Completo}
+Um grafo completo é um grafo no qual dois quaisquer vértices são
+adjacentes. Um grafo completo com n vértices representa-se por $K_n$.
+
+\subsubsection{Grafo Hamiltoniano}
+Chama-se caminho hamiltoniano a qualquer caminho elementar que passa por todos os vértices de $G$. Chama-se ciclo hamiltoniano a um ciclo que contém todos os vértices de $G$. Um grafo hamiltoniano é um grafo que contém um ciclo hamiltoniano.
+
+
+\vspace{0.5cm}
+\subsection{Definição de Caminho, Ciclo e Circuito}
+
+\subsubsection{Caminho}
+Um caminho num grafo $G$ é uma sequência de vértices de $G$ no
+qual dois vértices sucessivos definem uma aresta.
+
+\subsubsection{Ciclo}
+Um ciclo é um circuito simples, não trivial, onde não há repetição de
+vértices com a exceção dos vértices inicial e final.
+
+\subsubsection{Circuito}
+Um circuito é um caminho no qual o vértice inicial coincide com o vértice
+final.
+
+\vspace{0.5cm}
+
+\subsection{Definição de Matriz de Adjacência e Matriz de Pesos}
+\subsubsection{Matriz de Adjacência}
+Uma matriz $[a_{ij}] \in \mathcal{M}_{n \times n}(\mathbb{Z})$ diz-se uma matriz de adjacência de $G$ se
+    \[
+a_{ij} =
+\begin{cases}
+1 & \text{se } v_i \text{ e } v_j \text{ são adjacentes}, \\
+0 & \text{se } v_i \text{ e } v_j \text{ não são adjacentes}.
+\end{cases}
+\]
+
+\subsubsection{Matriz de Pesos}
+Uma matriz de pesos $[w_{ij}] \in \mathcal{M}_{n \times n}(\mathbb{R})$ representa os custos (ou distâncias, tempos, etc.) associados às arestas de um grafo ponderado. Assim, define-se:
+
+\[
+w_{ij} =
+\begin{cases}
+p & \text{se existe uma aresta entre } v_i \text{ e } v_j \text{ com peso } p, \\
+0 & \text{se } v_i = v_j, \\
+\infty & \text{se não existe aresta entre } v_i \text{ e } v_j.
+\end{cases}
+\]
+
+\newpage
+
+\section{Problema do Caixeiro Viajante}
+\subsection{Descrição}
+O Problema do Caixeiro Viajante consiste em encontrar o caminho mais curto que permita um "caixeiro" visitar um conjunto de cidades uma única vez, regressando ao ponto de partida.
+
+\vspace{0.3cm}
+
+Seja $G = (V, E)$ um grafo completo e ponderado, onde $V$ representa o conjunto de vértices (cidades) e $E$ o conjunto de arestas (ligações entre cidades), com pesos associados $w: E \rightarrow \mathbb{R}^+$ representando as distâncias.
+
+\vspace{0.3cm}
+
+O objetivo é minimizar a soma dos pesos das arestas percorridas, ou seja:
+\[
+\min \sum_{(v_i, v_j) \in C} w_{ij}
+\]
+onde $C$ é o ciclo hamiltoniano que visita todos os vértices exatamente uma vez.
+
+\vspace{0.5cm}
+
+\subsection{Variantes do TSP}
+Preencher...
+
+\vspace{0.5cm}
+
+\subsection{Algorítmos}
+\subsubsection{Vizinho mais Próximo}
+\subsubsection{Mais Barato}
+\subsubsection{Força Bruta}
+
+\vspace{0.5cm}
+
+\subsection{Dificuldades e Discussão sobre o TSP}
+
+\vspace{0.5cm}
+
+\subsection{Exemplos e Aplicações}
+
+\vspace{0.5cm}
+
+\subsection{Ponto de Vista da Computação}
+
+\newpage
+
+\section{Aplicação Desenvolvida}
+
+
+
+\newpage
+
+\section{Conclusão}
+
+\newpage
+
+\section{Bibliografia}
+
+
+\end{document}
